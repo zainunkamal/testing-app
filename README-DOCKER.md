@@ -125,49 +125,57 @@ File [`docker-compose.yml`](./docker-compose.yml) mengatur konfigurasi ketiga se
    ```bash
    docker compose up -d
    ```
-   ![Bukti Eksekusi: docker compose up -d](./images/3.1.png)
+   > 📸 **Bukti Eksekusi Terminal (3.1):**  
+   > ![Bukti Eksekusi: docker compose up -d](./images/docker/3.1.png)
 
 2. **Membangun Ulang Image dan Menjalankannya:**
    ```bash
    docker compose up -d --build
    ```
-   ![Bukti Eksekusi: docker compose up -d --build](./images/3.2.png)
+   > 📸 **Bukti Eksekusi Terminal (3.2):**  
+   > ![Bukti Eksekusi: docker compose up -d --build](./images/docker/3.2.png)
 
 3. **Melihat Status Container yang Sedang Berjalan:**
    ```bash
    docker compose ps
    ```
-   ![Bukti Eksekusi: docker compose ps](./images/3.3.png)
+   > 📸 **Bukti Eksekusi Terminal (3.3):**  
+   > ![Bukti Eksekusi: docker compose ps](./images/docker/3.3.png)
 
 4. **Melihat Log Seluruh Container Secara Real-Time:**
    ```bash
    docker compose logs -f
    ```
-   ![Bukti Eksekusi: docker compose logs -f](./images/3.4.png)
+   > 📸 **Bukti Eksekusi Terminal (3.4):**  
+   > ![Bukti Eksekusi: docker compose logs -f](./images/docker/3.4.png)
 
 5. **Melihat Log Service Tertentu (Misal App):**
    ```bash
    docker compose logs -f app
    ```
-   ![Bukti Eksekusi: docker compose logs -f app](./images/3.5.png)
+   > 📸 **Bukti Eksekusi Terminal (3.5):**  
+   > ![Bukti Eksekusi: docker compose logs -f app](./images/docker/3.5.png)
 
 6. **Menghentikan Seluruh Service:**
    ```bash
    docker compose stop
    ```
-   ![Bukti Eksekusi: docker compose stop](./images/3.6.png)
+   > 📸 **Bukti Eksekusi Terminal (3.6):**  
+   > ![Bukti Eksekusi: docker compose stop](./images/docker/3.6.png)
 
 7. **Menghentikan dan Menghapus Seluruh Container & Network:**
    ```bash
    docker compose down
    ```
-   ![Bukti Eksekusi: docker compose down](./images/3.7.png)
+   > 📸 **Bukti Eksekusi Terminal (3.7):**  
+   > ![Bukti Eksekusi: docker compose down](./images/docker/3.7.png)
 
 8. **Menghapus Total Termasuk Volume Database (Reset Ulang):**
    ```bash
    docker compose down -v
    ```
-   ![Bukti Eksekusi: docker compose down -v](./images/3.8.png)
+   > 📸 **Bukti Eksekusi Terminal (3.8):**  
+   > ![Bukti Eksekusi: docker compose down -v](./images/docker/3.8.png)
 
 ---
 
@@ -204,25 +212,29 @@ volumes:
    ```bash
    docker volume ls
    ```
-   ![Bukti Eksekusi: docker volume ls](./images/4.1.png)
+   > 📸 **Bukti Eksekusi Terminal (4.1):**  
+   > ![Bukti Eksekusi: docker volume ls](./images/docker/4.1.png)
 
 2. **Memeriksa Lokasi Penyimpanan Volume di Host:**
    ```bash
    docker volume inspect new-app_postgres_data
    ```
-   ![Bukti Eksekusi: docker volume inspect new-app_postgres_data](./images/4.2.png)
+   > 📸 **Bukti Eksekusi Terminal (4.2):**  
+   > ![Bukti Eksekusi: docker volume inspect new-app_postgres_data](./images/docker/4.2.png)
 
 3. **Menghapus Volume Tertentu (Container harus dalam kondisi mati):**
    ```bash
    docker volume rm new-app_postgres_data
    ```
-   ![Bukti Eksekusi: docker volume rm new-app_postgres_data](./images/4.3.png)
+   > 📸 **Bukti Eksekusi Terminal (4.3):**  
+   > ![Bukti Eksekusi: docker volume rm new-app_postgres_data](./images/docker/4.3.png)
 
 4. **Membersihkan Seluruh Volume yang Sudah Tidak Digunakan:**
    ```bash
    docker volume prune -f
    ```
-   ![Bukti Eksekusi: docker volume prune -f](./images/4.4.png)
+   > 📸 **Bukti Eksekusi Terminal (4.4):**  
+   > ![Bukti Eksekusi: docker volume prune -f](./images/docker/4.4.png)
 
 ---
 
@@ -252,13 +264,15 @@ Di dalam Docker Network, kita **tidak perlu** mencari IP container secara manual
    ```bash
    docker network ls
    ```
-   ![Bukti Eksekusi: docker network ls](./images/5.1.png)
+   > 📸 **Bukti Eksekusi Terminal (5.1):**  
+   > ![Bukti Eksekusi: docker network ls](./images/docker/5.1.png)
 
 2. **Melihat Container yang Terhubung dalam Network:**
    ```bash
    docker network inspect new-app_databridge-network
    ```
-   ![Bukti Eksekusi: docker network inspect new-app_databridge-network](./images/5.2.png)
+   > 📸 **Bukti Eksekusi Terminal (5.2):**  
+   > ![Bukti Eksekusi: docker network inspect new-app_databridge-network](./images/docker/5.2.png)
 
 ---
 
@@ -270,14 +284,16 @@ Untuk keperluan tugas yang mewajibkan perintah dasar Docker tanpa bantuan Docker
 ```bash
 docker network create databridge-net
 ```
-![Bukti Eksekusi: docker network create databridge-net](./images/6.1.png)
+> 📸 **Bukti Eksekusi Terminal (6.1):**  
+> ![Bukti Eksekusi: docker network create databridge-net](./images/docker/6.1.png)
 
 ### Langkah 2: Buat Named Volume
 ```bash
 docker volume create pgdata
 docker volume create redisdata
 ```
-![Bukti Eksekusi: docker volume create pgdata & redisdata](./images/6.2.png)
+> 📸 **Bukti Eksekusi Terminal (6.2):**  
+> ![Bukti Eksekusi: docker volume create pgdata & redisdata](./images/docker/6.2.png)
 
 ### Langkah 3: Jalankan Container PostgreSQL
 ```bash
@@ -292,7 +308,8 @@ docker run -d \
   -v $(pwd)/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro \
   postgres:16-alpine
 ```
-![Bukti Eksekusi: docker run postgres](./images/6.3.png)
+> 📸 **Bukti Eksekusi Terminal (6.3):**  
+> ![Bukti Eksekusi: docker run postgres](./images/docker/6.3.png)
 
 ### Langkah 4: Jalankan Container Redis
 ```bash
@@ -303,13 +320,15 @@ docker run -d \
   -v redisdata:/data \
   redis:7-alpine redis-server --appendonly yes
 ```
-![Bukti Eksekusi: docker run redis](./images/6.4.png)
+> 📸 **Bukti Eksekusi Terminal (6.4):**  
+> ![Bukti Eksekusi: docker run redis](./images/docker/6.4.png)
 
 ### Langkah 5: Build Image Next.js App
 ```bash
 docker build -t databridge-app:latest .
 ```
-![Bukti Eksekusi: docker build databridge-app](./images/6.5.png)
+> 📸 **Bukti Eksekusi Terminal (6.5):**  
+> ![Bukti Eksekusi: docker build databridge-app](./images/docker/6.5.png)
 
 ### Langkah 6: Jalankan Container Next.js App
 ```bash
@@ -322,7 +341,8 @@ docker run -d \
   -e REDIS_URL=redis://my-redis:6379/0 \
   databridge-app:latest
 ```
-![Bukti Eksekusi: docker run my-app](./images/6.6.png)
+> 📸 **Bukti Eksekusi Terminal (6.6):**  
+> ![Bukti Eksekusi: docker run my-app](./images/docker/6.6.png)
 
 ---
 
@@ -341,7 +361,8 @@ docker exec -it databridge-postgres psql -U postgres -d postgres_lab
 SELECT * FROM users; -- Menampilkan isi tabel users
 \q                   -- Keluar
 ```
-![Bukti Eksekusi: docker exec psql](./images/7.1.png)
+> 📸 **Bukti Eksekusi Terminal (7.1):**  
+> ![Bukti Eksekusi: docker exec psql](./images/docker/7.1.png)
 
 ### 2. Masuk ke Terminal Redis (redis-cli)
 Uji manipulasi key-value langsung di dalam container:
@@ -356,7 +377,8 @@ GET test:halo
 KEYS *
 exit
 ```
-![Bukti Eksekusi: docker exec redis-cli](./images/7.2.png)
+> 📸 **Bukti Eksekusi Terminal (7.2):**  
+> ![Bukti Eksekusi: docker exec redis-cli](./images/docker/7.2.png)
 
 ### 3. Masuk ke Shell Container Aplikasi Next.js
 Melihat filesystem dan struktur file aplikasi yang sudah di-bundle:
@@ -368,7 +390,8 @@ docker exec -it databridge-app sh
 ls -lah
 exit
 ```
-![Bukti Eksekusi: docker exec sh](./images/7.3.png)
+> 📸 **Bukti Eksekusi Terminal (7.3):**  
+> ![Bukti Eksekusi: docker exec sh](./images/docker/7.3.png)
 
 ---
 
@@ -379,14 +402,16 @@ Jalankan perintah ini untuk melihat penggunaan memori dan beban prosesor ketiga 
 ```bash
 docker stats
 ```
-![Bukti Eksekusi: docker stats](./images/8.1.png)
+> 📸 **Bukti Eksekusi Terminal (8.1):**  
+> ![Bukti Eksekusi: docker stats](./images/docker/8.1.png)
 
 ### 2. Menginspeksi Log Tertentu
 Melihat 50 baris log terakhir dari PostgreSQL:
 ```bash
 docker logs --tail 50 databridge-postgres
 ```
-![Bukti Eksekusi: docker logs](./images/8.2.png)
+> 📸 **Bukti Eksekusi Terminal (8.2):**  
+> ![Bukti Eksekusi: docker logs](./images/docker/8.2.png)
 
 ---
 

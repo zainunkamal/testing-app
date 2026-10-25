@@ -66,9 +66,11 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 3. Amati perubahan status badge, indikator waktu latensi (*roundtrip time*), dan ringkasan metadata.
 
 ### Hasil Pengujian:
-- **Status PostgreSQL:** `CONNECTED` (Latensi rata-rata: ~1-3 ms).
-- **Status Redis:** `CONNECTED` (Latensi rata-rata: ~0.8-2 ms).
-- **Keamanan Data:** Informasi host dan database ditampilkan secara aman, password terpotong (*redacted*).
+- **Status PostgreSQL:** `CONNECTED` (Latensi: 19 ms).
+- **Status Redis:** `CONNECTED` (Latensi: 19 ms).
+- **Keamanan Data:** Informasi host (`postgres`, `redis`) dan database ditampilkan secara aman, password terpotong (*redacted*).
+
+![Bukti Pengujian: Unified Dashboard](./images/testing/01-dashboard.png)
 
 > **Catatan Uji:** Pengujian paralel tidak saling memblokir (*non-blocking*), dieksekusi melalui endpoint server `/api/postgres/test` dan `/api/redis/test`.
 
@@ -85,7 +87,9 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 * **Hasil:**
   - Query probe `SELECT 1 as result;` sukses dieksekusi.
   - Server mengembalikan nama basis data aktif `postgres_lab`, port `5432`, dan status enkripsi SSL.
-  - Latensi berkisar antara 1 ms hingga 4 ms (sangat optimal karena berada dalam satu virtual bridge Docker).
+  - Latensi tercatat sangat cepat dan stabil.
+
+![Bukti Pengujian: PostgreSQL Connection Test](./images/testing/02-postgres-connection.png)
 
 ---
 
@@ -93,26 +97,26 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 
 * **Tujuan:** Menguji keakuratan pembacaan skema dinamis dari `information_schema` serta integritas manipulasi data (Create, Read, Update, Delete).
 
-#### A. Pembacaan Skema (Read)
+#### A. Pembacaan Skema & Data (Read)
 - Aplikasi berhasil mendeteksi tabel bawaan yang di-inisialisasi oleh script [`database/init.sql`](./database/init.sql):
-  - `users` (3 baris data awal: Ahmad Fauzi, Siti Rahma, Budi Santoso)
-  - `products` (3 baris data awal: Laptop ThinkPad, Mechanical Keyboard, Wireless Mouse)
-  - `customers` (3 baris data awal: PT Maju Jaya, CV Berkah Abadi, Toko Sukses)
+  - `customers` (3 baris: Maya Safitri, Rian Pratama, Dewi Lestari)
+  - `products` (3 baris: Laptop ThinkPad, Mechanical Keyboard, Wireless Mouse)
+  - `users` (3 baris: Ahmad Fauzi, Siti Rahma, Budi Santoso)
+
+![Bukti Pengujian: Eksplorasi Tabel PostgreSQL](./images/testing/03-postgres-tables.png)
 
 #### B. Tambah Data (Create)
-- Pengujian menambahkan user baru:
-  - `name`: `"Zainun Lab Tester"`
-  - `email`: `"zainun@test.lab"`
-  - `age`: `25`
-- **Hasil:** Data langsung masuk ke tabel dengan auto-increment ID yang valid.
+- Form modal dinamis terbuka otomatis membaca tipe kolom (`fullName`, `phone`, `city`, `createdAt`).
+- Pengujian menambahkan record baru dengan validasi tipe data parameter aman.
+
+![Bukti Pengujian: Modal Tambah Data PostgreSQL](./images/testing/04-postgres-crud-modal.png)
 
 #### C. Ubah Data (Update)
-- Pengujian mengubah kolom `age` dari `25` menjadi `26`.
-- **Hasil:** Data ter-update secara presisi berdasarkan Primary Key (`id`).
+- Pengujian mengubah kolom data tersimpan secara presisi berdasarkan Primary Key (`id`).
 
 #### D. Hapus Data (Delete)
 - Pengujian menekan tombol hapus dengan konfirmasi pop-up modal.
-- **Hasil:** Record dihapus dari database. Verifikasi dilakukan langsung via `docker exec -it databridge-postgres psql` dan record terbukti sudah tidak ada.
+- Record terhapus permanen dari basis data PostgreSQL.
 
 ---
 
@@ -121,10 +125,12 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 * **Tujuan:** Menguji pengumpulan statistik internal server PostgreSQL tanpa mengorbankan performa database.
 * **Metrik yang Berhasil Diuji:**
   - **Engine Version:** `PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0)`
-  - **Active Connections:** 2 / 100 connection pool limit.
-  - **Database Disk Size:** ~8.4 MB (diformat secara rapi via fungsi `pg_size_pretty`).
+  - **Active Clients:** 6 / 100 connection pool limit.
+  - **Database Disk Size:** `7719 kB` (diformat via fungsi `pg_size_pretty`).
   - **Encoding & Timezone:** `UTF8`, timezone `UTC`.
-  - **Fitur Auto-refresh:** Toggle refresh otomatis setiap 10 detik berfungsi normal.
+  - **Uptime:** Server aktif dan sinkron.
+
+![Bukti Pengujian: Telemetri & Info PostgreSQL](./images/testing/05-postgres-info.png)
 
 ---
 
@@ -135,11 +141,13 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 * **Tujuan:** Menguji socket antrian Redis in-memory storage menggunakan ioredis client.
 * **Prosedur:**
   1. Akses menu **Redis -> Connection Test**.
-  2. Klik **"Ping Redis Server"**.
+  2. Klik **"Test Redis Connection"**.
 * **Hasil:**
   - Perintah `PING` dijawab dengan respon instan `PONG`.
-  - Latensi tercatat stabil di bawah 1.5 ms.
-  - Client mode terdeteksi sebagai `Standalone` (non-cluster).
+  - Latensi tercatat **2 ms**.
+  - Host terdeteksi `redis`, port `6379`, database `db0`.
+
+![Bukti Pengujian: Redis Connection Test](./images/testing/06-redis-connection.png)
 
 ---
 
@@ -147,19 +155,14 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 
 * **Tujuan:** Memvalidasi operasi caching, format serialization JSON, serta masa kedaluwarsa (*Time-To-Live*).
 
-#### A. Penyimpanan Data & Format JSON
-- Pengujian membuat key baru:
-  - **Key:** `session:user:101`
-  - **Value:** `{"userId": 101, "role": "admin", "token": "xyz987"}`
-  - **TTL Preset:** `1 Hour (3600s)`
-- **Hasil:** Value otomatis diformat dan terdeteksi sebagai JSON terstruktur di modal viewer.
+#### A. Pembacaan Key via Algoritma SCAN (Non-Blocking)
+- Aplikasi menggunakan perintah `SCAN` untuk mencegah server lockup.
+- Key yang sebelumnya diset (misal `test:halo` dari pengujian CLI docker) terdeteksi otomatis dengan tipe `STRING` dan TTL `PERSISTENT`.
 
-#### B. Pengujian Algoritma SCAN (Non-Blocking)
-- Aplikasi menggunakan perintah `SCAN` dengan `COUNT 50` untuk mencegah server lockup yang biasa terjadi jika menggunakan `KEYS *` di skala produksi.
-- Seluruh key berhasil diindeks beserta badge tipe data (`string`, `hash`, `list`) dan status TTL (`PERSISTENT` atau countdown waktu tersisa).
+![Bukti Pengujian: Redis Key Explorer](./images/testing/07-redis-keys.png)
 
-#### C. Penghapusan Key
-- Key `session:user:101` berhasil dihapus melalui tombol dialog konfirmasi, dan hilang seketika dari tabel cache browser.
+#### B. Penyimpanan & Manipulasi Key
+- Mendukung pembuatan key baru dengan preset TTL (1 Hour, 24 Hours, Persistent) dan modal viewer interaktif.
 
 ---
 
@@ -167,11 +170,13 @@ Menguji kemampuan antarmuka dashboard utama dalam memantau ketersediaan PostgreS
 
 * **Tujuan:** Memantau alokasi RAM dan throughput Redis engine di dalam container.
 * **Metrik yang Berhasil Diuji:**
-  - **Engine Version:** `Redis 7.x (Alpine)`
-  - **Memory Used:** ~1.15 MB / Peak ~1.30 MB.
+  - **Engine Version:** `Redis v7.4.11` (Standalone)
+  - **Memory Usage:** `1.19M` (Peak: 1.26M).
   - **Connected Clients:** 1 active client connection.
-  - **Total Keys:** Menghitung total key aktif di database index 0 secara akurat.
-  - **Instantaneous Ops/sec:** 0-15 ops/sec saat pengujian aktif.
+  - **Total Keys (DB0):** 1 key terdaftar aktif.
+  - **Instantaneous Ops/sec:** 0 ops/sec (normal idle state).
+
+![Bukti Pengujian: Telemetri & Info Redis](./images/testing/08-redis-info.png)
 
 ---
 
