@@ -159,7 +159,7 @@ Open [http://localhost:3000](http://localhost:3000) to start testing your databa
 │   │   └── ui/                 # Button, Card, Badge, Dialog
 │   ├── lib/                    # Core utilities (logger, errors, url-sanitizer, prisma, redis)
 │   ├── services/               # PostgresService & RedisService
-│   └── types/                  # TypeScript interfaces for database & cache operations
+│   └── types/                  # TypeScript interfaces for database & cache operations 
 ```
 
 ---
